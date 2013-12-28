@@ -4,13 +4,20 @@ angular.module('angularWebGL')
   .directive('renderer', function () {
     return {
       restrict: 'A',
-      controller: function controller($scope, $element, $attrs, cubeSvc) {
+      controller: function controller($scope, $element, $attrs, rendererSvc) {
+
 
         /*** MODEL ***/
 
         var container = $element[0];
+        var aspectRatio = container.offsetWidth / container.offsetHeight;
+
+        rendererSvc.init(aspectRatio);
+
         var renderer = new THREE.WebGLRenderer({ antialias: true });
-        var camera = new THREE.PerspectiveCamera( 45, container.offsetWidth / container.offsetHeight, 1, 4000 );
+        var camera = rendererSvc.getCamera();
+
+        console.log(camera);
         var scene = new THREE.Scene();
 
         $scope.cameraPositionZ = 3;
@@ -21,7 +28,7 @@ angular.module('angularWebGL')
           // Render the scene
           renderer.render( scene, camera );
 
-          // TODO: rotate all cubes.
+          cube.rotation.y = Date.now() * 0.0005;
 
           // Ask for another frame
           requestAnimationFrame(run);	
@@ -34,9 +41,6 @@ angular.module('angularWebGL')
         var canvas = renderer.domElement;
 
         container.appendChild(canvas);
-
-        // Put in a camera
-        camera.position.set( 0, 0, $scope.cameraPositionZ );
 
         $scope.$watch('cameraPositionZ', function (newValue, oldValue) {
           if (newValue) {

@@ -12,8 +12,6 @@ angular.module('angularWebGL')
 
     var init = function init () {
 
-      console.log("initing...");
-
       for (var x = 0; x < table.height; x++) {
         for (var y = 0; y < table.width; y++) {
 
@@ -28,8 +26,6 @@ angular.module('angularWebGL')
           cubes.push(newCube);
         }
       }
-
-      console.log(cubes);
 
     }();
 
