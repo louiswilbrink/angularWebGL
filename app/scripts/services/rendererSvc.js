@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('angularWebGL')
-  .factory('rendererSvc', function () {
+  .factory('rendererSvc', function ($timeout) {
 
     // MODEL
 
@@ -38,7 +38,7 @@ angular.module('angularWebGL')
       return cubePositions;
     };
 
-    var addMeshes = function () {
+    var populateMeshes = function () {
 
       var cubePositions = generateCubePositions();
 
@@ -48,6 +48,7 @@ angular.module('angularWebGL')
       // Create a reusable cube geometry.
       var geometry = new THREE.CubeGeometry(1, 1, 1);
 
+      // Create each mesh and store them in meshes[].
       angular.forEach(cubePositions, function (position) {
 
         // Create a mesh using the geometry and material.
@@ -58,10 +59,38 @@ angular.module('angularWebGL')
         cube.rotation.x = Math.PI / 5;
         cube.rotation.y = Math.PI / 5;
 
-        // Add the cube to our scene
-        scene.add(cube);
+        var mesh = new Mesh(cube);
+
+        meshes.push(mesh);
       });
     };
+
+    var randomizeMeshAppearances = function () {
+
+      //var rand = myArray[
+
+      var randomMesh = meshes[Math.floor(Math.random() * meshes.length)];
+
+      if (!randomMesh.isAdded) {
+        scene.add(randomMesh.mesh);
+      }
+      else {
+        scene.remove(randomMesh.mesh);
+      }
+
+      randomMesh.isAdded = !randomMesh.isAdded;
+
+      $timeout(randomizeMeshAppearances, 700);
+    };
+
+    /*
+    var rotateCubes = function () {
+
+      angular.forEach(meshes, function (mesh) {
+        mesh.mesh.rotation.y = mesh.mesh.rotation.y + 0.5;
+      });
+    };
+    */
 
     var addLight = function () {
 
@@ -78,7 +107,7 @@ angular.module('angularWebGL')
       // Create and set initial position of camera.
       camera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 1, 4000);
 
-      camera.position.set(0, 0, 3);
+      camera.position.set(0, 0, 15);
     };
 
     var createRenderer = function (container) {
@@ -104,7 +133,9 @@ angular.module('angularWebGL')
 
         addLight();
 
-        addMeshes();
+        populateMeshes();
+
+        randomizeMeshAppearances();
 
         return renderer;
       },

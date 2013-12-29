@@ -26,15 +26,13 @@ angular.module('angularWebGL')
         var camera = rendererSvc.getCamera();
         var scene = rendererSvc.getScene();
 
-        $scope.cameraPositionZ = 10;
+        $scope.cameraPositionZ = 20;
 
         // METHODS
 
         var run = function () {
           // Render the scene
           renderer.render(scene, camera);
-
-          // cube.rotation.y = Date.now() * 0.0005;
 
           // Ask for another frame
           requestAnimationFrame(run);	
